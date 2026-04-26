@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Geo: Desafio Interativo</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f6;
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 { text-align: center; color: var(--primary); }
+
+        .info-section {
+            background: var(--light);
+            padding: 15px;
+            border-left: 5px solid var(--secondary);
+            margin-bottom: 25px;
+        }
+
+        .quiz-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .question {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button.option-btn {
+            padding: 12px;
+            border: 2px solid #eee;
+            background: #f9f9f9;
+            cursor: pointer;
+            border-radius: 6px;
+            text-align: left;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        button.option-btn:hover:not(:disabled) {
+            border-color: var(--secondary);
+            background: #eef7ff;
+        }
+
+        .feedback {
+            margin-top: 12px;
+            font-weight: bold;
+            display: none;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .correct { background: #d4edda; color: var(--success); }
+        .wrong { background: #f8d7da; color: var(--error); }
+
+        #score-board {
+            position: sticky;
+            bottom: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌍 Desafio Geográfico Completo</h1>
+    
+    <div class="info-section">
+        <strong>Resumo de apoio:</strong> A Terra gira 360° em 24h ($360 / 24 = 15^\circ$ por hora). Para Leste as horas aumentam, para Oeste as horas diminuem. Latitude é medida a partir do Equador e Longitude a partir de Greenwich.
+    </div>
+
+    <div id="quiz" class="quiz-grid">
+        <div class="question" data-correct="1">
+            <p><strong>1. Se você viaja de 45° Leste para 15° Leste, o que faz com seu relógio?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Adiantar</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Atrasar</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Manter igual</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="2">
+            <p><strong>2. Qual linha imaginária divide a Terra em Hemisfério Norte e Sul?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Meridiano de Greenwich</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Trópico de Capricórnio</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Linha do Equador</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="0">
+            <p><strong>3. O movimento de rotação é responsável por:</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Sucessão dos dias e noites</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Estações do ano</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Fases da lua</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="1">
+            <p><strong>4. Quantos graus de longitude correspondem a exatamente 1 fuso horário?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">10°</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">15°</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">30°</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="0">
+            <p><strong>5. Se em Greenwich (0°) são 12h, que horas serão a 30° Leste?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">14h</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">10h</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">13h</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="2">
+            <p><strong>6. O que define a Latitude de um lugar?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">A distância em relação a Greenwich</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">A altitude em relação ao mar</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">A distância em graus até o Equador</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="1">
+            <p><strong>7. Qual a longitude máxima que um ponto pode ter na Terra?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">90°</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">180°</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">360°</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="0">
+            <p><strong>8. Como se chama o movimento da Terra em torno do Sol?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Translação</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Nutação</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Evolução</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="1">
+            <p><strong>9. O Brasil possui quantos fusos horários teóricos em seu território continental e ilhas?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">3</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">4</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">2</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="2">
+            <p><strong>10. A Linha Internacional de Mudança de Data (LID) está aproximadamente sobre qual meridiano?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">0° (Greenwich)</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">90°</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">180°</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="1">
+            <p><strong>11. Em qual continente se cruza o ponto 0°, 0° (Equador com Greenwich)?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">América</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">África (no Oceano Atlântico, próximo à costa)</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Europa</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="0">
+            <p><strong>12. Se em uma cidade A (0°) são 15h, que horas são na cidade B (45° Oeste)?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">12h</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">18h</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">20h</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="0">
+            <p><strong>13. Qual o sentido da rotação da Terra?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Oeste para Leste</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Leste para Oeste</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Norte para Sul</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="1">
+            <p><strong>14. O Trópico de Câncer está localizado em qual hemisfério?</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Sul</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Norte</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Oriental</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="2">
+            <p><strong>15. GPS significa:</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Geografia Para Sociedade</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Guia de Pontos do Solo</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Sistema de Posicionamento Global</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="0">
+            <p><strong>16. Um lugar com latitude 0° está exatamente sobre:</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">A Linha do Equador</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">O Polo Norte</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">O Meridiano de Greenwich</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="1">
+            <p><strong>17. As estações do ano ocorrem devido à translação e à:</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Distância da Lua</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Inclinação do eixo terrestre</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Velocidade da rotação</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-correct="2">
+            <p><strong>18. O fuso horário referencial do mundo (GMT 0) passa por:</strong></p>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this, 0)">Paris</button>
+                <button class="option-btn" onclick="checkAnswer(this, 1)">Nova York</button>
+                <button class="option-btn" onclick="checkAnswer(this, 2)">Londres (Greenwich)</button>
+            </div>
+            <div class="feedback"></div>
+        </div>
+
+    </div>
+
+    <div id="score-board">
+        Sua Pontuação: <span id="points">0</span> / 18
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    const totalQuestions = 18;
+    const answeredQuestions = new Set();
+
+    function checkAnswer(button, index) {
+        const questionDiv = button.closest('.question');
+        const allQuestions = Array.from(document.querySelectorAll('.question'));
+        const questionIndex = allQuestions.indexOf(questionDiv);
+        
+        if (answeredQuestions.has(questionIndex)) return;
+
+        const correctIndex = parseInt(questionDiv.getAttribute('data-correct'));
+        const feedback = questionDiv.querySelector('.feedback');
+        const buttons = questionDiv.querySelectorAll('.option-btn');
+
+        feedback.style.display = 'block';
+        
+        // Desativa todos os botões daquela pergunta
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (index === correctIndex) {
+            button.style.background = '#27ae60';
+            button.style.color = 'white';
+            button.style.borderColor = '#27ae60';
+            feedback.textContent = "✅ Excelente! Você acertou.";
+            feedback.className = "feedback correct";
+            score++;
+        } else {
+            button.style.background = '#e74c3c';
+            button.style.color = 'white';
+            button.style.borderColor = '#e74c3c';
+            buttons[correctIndex].style.border = "2px solid #27ae60";
+            buttons[correctIndex].style.background = "#d4edda";
+            feedback.textContent = "❌ Não foi dessa vez.";
+            feedback.className = "feedback wrong";
+        }
+
+        answeredQuestions.add(questionIndex);
+        document.getElementById('points').textContent = score;
+
+        if(answeredQuestions.size === totalQuestions) {
+            alert("Parabéns! Você concluiu o desafio. Pontuação final: " + score + "/" + totalQuestions);
+        }
+    }
+</script>
+
+</body>
+</html>
